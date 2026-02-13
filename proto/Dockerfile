@@ -1,0 +1,16 @@
+FROM golang:1.25
+
+ARG PROTOC_VERSION=27.1
+
+RUN apt update && apt install -y unzip curl git && rm -rf /var/lib/apt/list/* && \
+    curl -sSL https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip -o /tmp/protoc.zip && \
+    unzip /tmp/protoc.zip -d /usr/local && rm /tmp/protoc.zip
+
+RUN git clone --depth=1 https://github.com/googleapis/googleapis /usr/local/include/googleapis
+
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+ENV PATH="$PATH:/go/bin"
+
+WORKDIR /app
