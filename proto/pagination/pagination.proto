@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package pagination;
+option go_package = "github.com/Molov30/go-microservices/generated/pagination;pagination";
+
+message Pagination {
+    uint32 offset = 1;
+    uint32 limit = 2;
+}
