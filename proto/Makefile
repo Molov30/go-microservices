@@ -17,12 +17,13 @@ gen: docker-build
 	@echo "Generating Go code from proto files..."
 	@mkdir -p $(GENERATED_DIR)
 	@docker run --rm \
+		--user $(shell id -u):$(shell id -g) \
 		-v $(abspath $(PROTO_ROOT)):/app/proto \
 		-v $(GENERATED_DIR):/app/generated \
 		$(DOCKER_IMAGE) \
     	bash -c '\
     		set -e; \
-    		for dir in account pagination; do \
+    		for dir in account pagination auth; do \
     			echo "Processing $$dir"; \
     			mkdir -p /app/generated/$$dir; \
     			cd /app/proto/$$dir; \
@@ -40,11 +41,6 @@ gen: docker-build
     			done; \
     		done; \
     	'
-
-## clean: Remove generated Go code
-clean:
-	@echo "Cleaning generated Go code..."
-	find account pagination -type d -name go -exec rm -rf {} +
 
 ## help: print this help message
 help:

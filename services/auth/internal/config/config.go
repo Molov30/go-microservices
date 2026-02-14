@@ -14,9 +14,14 @@ type Config struct {
 	AppEnv string `env:"APP_ENV" json:"app_env" required:"true" default:"development"`
 
 	Host     string `env:"GRPC_HOST" json:"host" required:"true" default:"localhost"`
-	Port     string `env:"GRPC_PORT" json:"port" required:"true" default:"50051"`
+	Port     string `env:"GRPC_PORT" json:"port" required:"true" default:"9000"`
 	LogLevel string `env:"LOG_LEVEL" json:"log_level" required:"true" default:"info"`
 	DbDSN    string `env:"DB_DSN" json:"db_dsn" required:"true"`
+
+	JwtSecret             string `env:"JWT_SECRET" json:"jwt_secret" required:"true"`
+	AccessTokenTTLMinutes int    `env:"ACCESS_TOKEN_TTL_MINUTES" json:"access_token_ttl_minutes" required:"true" defailt:"50052"`
+
+	RefreshTokenTTLDays int `env:"REFRESH_TOKEN_TTL_DAYS" json:"refresh_token_ttl_days" required:"true" default:"30"`
 }
 
 func Load() (*Config, error) {
