@@ -28,7 +28,6 @@ type MiddlewareFunc func(http.Handler) http.Handler
 
 // Healthz operation middleware
 func (siw *ServerInterfaceWrapper) Healthz(w http.ResponseWriter, r *http.Request) {
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Healthz(w, r)
 	}))

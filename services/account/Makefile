@@ -7,6 +7,11 @@ LDFLAGS ?= -ldflags "-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME)"
 
 GOFILES ?= $(shell find . -name "*.go" -type f -not -path "./vendor/*" -not -path "./.git/*")
 
+# Docker settings
+DOCKER_IMAGE ?= $(APP_NAME)-service
+DOCKER_TAG ?= $(VERSION)
+DOCKER_REGISTRY ?= localhost:5000
+
 # Default target
 DEFAULT_GOAL := build
 
@@ -83,6 +88,7 @@ tools:
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	go install go.uber.org/mock/mockgen@latest
 	go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+	go install github.com/pressly/goose/v3/cmd/goose@latest
 
 ## docs: Generate documentation
 docs:
@@ -108,4 +114,36 @@ dev: fmt lint test build
 ## ci: CI/CD workflow
 ci: deps fmt lint test build
 
-.PHONY: build run run-nly deps deps-update fmt lint test test-coverage bench clean install tools docs help dev ci
+## docker-build: Build Docker image
+docker-build:
+	@echo "Building Docker image $(DOCKER_IMAGE):$(DOCKER_TAG)..."
+	docker build \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		-t $(DOCKER_IMAGE):$(DOCKER_TAG) \
+		-t $(DOCKER_IMAGE):latest \
+		.
+
+## docker-push: Push Docker image to registry
+docker-push: docker-build
+	@echo "Pushing Docker image to registry..."
+	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker tag $(DOCKER_IMAGE):latest $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):latest
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):$(DOCKER_TAG)
+	docker push $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):latest
+
+## docker-run: Run Docker container
+docker-run:
+	@echo "Running Docker container..."
+	docker run --rm -it \
+		-p 8080:8080 \
+		-p 50051:50051 \
+		--name $(APP_NAME) \
+		$(DOCKER_IMAGE):latest
+
+## docker-clean: Remove Docker images
+docker-clean:
+	@echo "Removing Docker images..."
+	docker rmi $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_IMAGE):latest || true
+
+.PHONY: build run run-nly deps deps-update fmt lint test test-coverage bench clean install tools docs help dev ci docker-build docker-push docker-run docker-clean

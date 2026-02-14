@@ -11,8 +11,8 @@ import (
 type Config struct {
 	ServiceName string `env:"SERVICE_NAME" required:"true" default:"account-service"`
 	AppEnv      string `env:"APP_ENV" required:"true" default:"development"`
-	Host        string `env:"HTTP_HOST" required:"true" default:"localhost"`
-	Port        string `env:"HTTP_PORT" required:"true" default:"9000"`
+	Host        string `env:"GRPC_HOST" required:"true" default:"localhost"`
+	Port        string `env:"GRPC_PORT" required:"true" default:"9000"`
 	LogLevel    string `env:"LOG_LEVEL" required:"true" default:"info"`
 	DbDSN       string `env:"DB_DSN" required:"true"`
 }

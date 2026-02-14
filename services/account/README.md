@@ -5,6 +5,6 @@
 | SERVICE_NAME | Название сервиса | Account |
 | APP_ENV | Окружение | local |
 | LOG_LEVEL | Уровнень логирования | debug |
-| HTTP_PORT | Прослушиваемый HTTP порт | 9000 |
-| HTTP_HOST | Прослушиваемый HTTP хост | localhost |
+| GRPC_PORT | Прослушиваемый GRPC порт | 9000 |
+| GRPC_HOST | Прослушиваемый GRPC хост | localhost |
 ----------------------------------------------------

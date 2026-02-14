@@ -88,6 +88,8 @@ linters:
       keywords:
         - FIXME
         - TODO
+    gomoddirectives:
+      replace-local: true  # Allow local replace directives for monorepo internal modules
     govet:
       disable:
         - fieldalignment
