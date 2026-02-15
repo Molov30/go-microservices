@@ -12,6 +12,11 @@ BUILD_TIME ?= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 gen:
 	$(MAKE) -C $(PROTO_DIR) gen GENERATED_DIR=$(GENERATED_DIR) PROJECT_ROOT=$(PROJECT_ROOT)
 
+## clean: Remove generated Go code
+clean:
+	@echo "Cleaning generated Go code..."
+	find $(GENERATED_DIR)/account $(GENERATED_DIR)/pagination $(GENERATED_DIR)/auth -type d -name go -exec rm -rf {} +
+
 ## compose-up: Start all services with docker compose
 compose-up:
 	@echo "Starting services with docker compose..."

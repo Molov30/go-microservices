@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres-account:
     image: postgres:latest
     container_name: account-postgres
     environment:
@@ -9,7 +9,26 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_account_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  postgres-auth:
+    image: postgres:latest
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -31,14 +50,34 @@ services:
     env_file:
       - ./account/.env
     depends_on:
-      postgres:
+      postgres-account:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  auth:
+    build:
+      context: ..
+      dockerfile: services/auth/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    container_name: auth-service
+    ports:
+      - "9001:9001" # gRPC
+    env_file:
+      - ./auth/.env
+    depends_on:
+      postgres-auth:
         condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_account_data:
+  postgres_auth_data:
 
 networks:
   app-network:
