@@ -2,7 +2,6 @@ package mapper
 
 import (
 	authpb "github.com/Molov30/go-microservices/generated/auth"
-
 	"github.com/Molov30/go-microservices/services/auth/internal/model"
 	repomodel "github.com/Molov30/go-microservices/services/auth/internal/repository/model"
 )
@@ -11,6 +10,7 @@ func UserToRepoUser(user *model.User) *repomodel.User {
 	return &repomodel.User{
 		ID:           user.ID,
 		Login:        user.Login,
+		Email:        user.Email,
 		PasswordHash: user.PasswordHash,
 		CreatedAt:    user.CreatedAt,
 		UpdatedAt:    user.UpdatedAt,

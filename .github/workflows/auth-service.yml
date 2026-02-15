@@ -1,28 +1,28 @@
-name: Account Service CI
+name: Auth Service CI
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'services/account/**'
+      - 'services/auth/**'
       - 'generated/**'
       - 'proto/**'
-      - '.github/workflows/account-service.yml'
+      - '.github/workflows/auth-service.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'services/account/**'
+      - 'services/auth/**'
       - 'generated/**'
       - 'proto/**'
-      - '.github/workflows/account-service.yml'
+      - '.github/workflows/auth-service.yml'
 
 env:
   GO_VERSION: '1.25'
-  SERVICE_NAME: account
+  SERVICE_NAME: auth
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/account-service
+  IMAGE_NAME: ${{ github.repository }}/auth-service
 
 jobs:
   lint-and-test:
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./services/account
+        working-directory: ./services/auth
 
     steps:
       - name: Checkout code
@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache-dependency-path: services/account/go.sum
+          cache-dependency-path: services/auth/go.sum
 
       - name: Install dependencies
         run: make deps
@@ -49,7 +49,7 @@ jobs:
         uses: golangci/golangci-lint-action@v7
         with:
           version: latest
-          working-directory: services/account
+          working-directory: services/auth
           args: --timeout=10m
 
       - name: Run tests
@@ -61,9 +61,9 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          file: ./services/account/coverage.out
-          flags: account-service
-          name: account-service-coverage
+          file: ./services/auth/coverage.out
+          flags: auth-service
+          name: auth-service-coverage
 
   build:
     name: Build Binary
@@ -71,7 +71,7 @@ jobs:
     needs: lint-and-test
     defaults:
       run:
-        working-directory: ./services/account
+        working-directory: ./services/auth
 
     steps:
       - name: Checkout code
@@ -83,7 +83,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache-dependency-path: services/account/go.sum
+          cache-dependency-path: services/auth/go.sum
 
       - name: Build binary
         run: make build
@@ -91,8 +91,8 @@ jobs:
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: account-binary
-          path: services/account/bin/account
+          name: auth-binary
+          path: services/auth/bin/auth
           retention-days: 7
 
   docker-build:
@@ -145,7 +145,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./services/account/Dockerfile
+          file: ./services/auth/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

@@ -17,7 +17,7 @@ func upInitdb(ctx context.Context, tx *sql.Tx) error {
 				id BIGSERIAL PRIMARY KEY,
 				login TEXT NOT NULL UNIQUE,
 				email TEXT NOT NULL UNIQUE,
-				password_hash NOT NULL,
+				password_hash TEXT NOT NULL,
 				created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 				updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 			);
@@ -27,7 +27,7 @@ func upInitdb(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	_, err = tx.ExecContext(ctx, `
-			CREATE TABLE IF NOT EXISTS refresh_token(
+			CREATE TABLE IF NOT EXISTS refresh_tokens(
 				id BIGSERIAL PRIMARY KEY,
 				user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 				token TEXT NOT NULL UNIQUE,
