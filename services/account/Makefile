@@ -85,7 +85,6 @@ install: build
 ## tools: Install tools
 tools:
 	@echo "Installing tools..."
-	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	go install go.uber.org/mock/mockgen@latest
 	go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
 	go install github.com/pressly/goose/v3/cmd/goose@latest
