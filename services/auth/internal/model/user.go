@@ -12,6 +12,7 @@ type User struct {
 }
 
 type UserRegister struct {
+	UserID   uint64
 	Login    string
 	Email    string
 	Password string

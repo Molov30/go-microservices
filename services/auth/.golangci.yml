@@ -178,7 +178,7 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(github.com/Molov30/go-microservices/services/account)
+        - prefix(github.com/Molov30/go-microservices/services/auth)
   exclusions:
     generated: lax
     paths:

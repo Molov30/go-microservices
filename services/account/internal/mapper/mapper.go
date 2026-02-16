@@ -61,7 +61,6 @@ func PbToUserCreate(pb *accountpb.CreateUser) *model.CreateUser {
 		FirstName:  pb.FirstName,
 		LastName:   pb.LastName,
 		MiddleName: pb.MiddleName,
-		Password:   pb.Password,
 		Age:        pb.Age,
 	}
 }

@@ -6,13 +6,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Molov30/go-microservices/services/auth/internal/config"
-	_ "github.com/Molov30/go-microservices/services/auth/internal/repository/migrations" // Register goose migrations via init()
 	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
+
+	"github.com/Molov30/go-microservices/services/auth/internal/config"
+	_ "github.com/Molov30/go-microservices/services/auth/internal/repository/migrations" // Register goose migrations via init()
 )
 
 type Repository struct {

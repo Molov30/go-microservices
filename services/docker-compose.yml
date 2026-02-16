@@ -75,6 +75,25 @@ services:
       - app-network
     restart: unless-stopped
 
+  gateway:
+    build:
+      context: ..
+      dockerfile: services/gateway/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    container_name: gateway-service
+    ports:
+      - "9002:9002" # gRPC
+    env_file:
+      - ./gateway/.env
+    depends_on:
+      - account
+      - auth
+    networks:
+      - app-network
+    restart: unless-stopped
+
 volumes:
   postgres_account_data:
   postgres_auth_data:

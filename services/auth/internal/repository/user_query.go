@@ -5,11 +5,12 @@ import (
 	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+
 	"github.com/Molov30/go-microservices/services/auth/internal/mapper"
 	"github.com/Molov30/go-microservices/services/auth/internal/model"
 	repomodel "github.com/Molov30/go-microservices/services/auth/internal/repository/model"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 func (r *Repository) CreateUser(ctx context.Context, user *model.User) error {
@@ -62,4 +63,20 @@ func (r *Repository) GetUserByLoginOrEmail(ctx context.Context, loginOrEmail str
 	}
 
 	return mapper.RepoUserToUser(&user), nil
+}
+
+func (r *Repository) DeleteUser(ctx context.Context, userID uint64) error {
+	res := r.db.
+		WithContext(ctx).
+		Where("id = ?", userID).
+		Delete(&repomodel.User{})
+
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return ErrEntryNotFound
+		}
+		return fmt.Errorf("failed to delete user: %w", res.Error)
+	}
+
+	return nil
 }

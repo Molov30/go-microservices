@@ -14,7 +14,7 @@ import (
 )
 
 type AccountService interface {
-	CreateUser(ctx context.Context, user *model.CreateUser) error
+	CreateUser(ctx context.Context, user *model.CreateUser) (*model.User, error)
 	GetUser(ctx context.Context, userID uint64) (*model.User, error)
 	GetUsers(ctx context.Context, limit, offset int) ([]*model.User, error)
 	DeleteUser(ctx context.Context, userID uint64) error

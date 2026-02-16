@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -10,7 +11,7 @@ import (
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user *model.User) error
+	CreateUser(ctx context.Context, user *model.User) (*model.User, error)
 	GetUser(ctx context.Context, userID uint64) (*model.User, error)
 	GetUsers(ctx context.Context, limit, offset int) ([]*model.User, error)
 	DeleteUser(ctx context.Context, userID uint64) error
@@ -29,8 +30,8 @@ func NewAccountService(repo Repository, logger *zerolog.Logger) *AccountService 
 	}
 }
 
-func (s *AccountService) CreateUser(ctx context.Context, newUser *model.CreateUser) error {
-	user := model.User{
+func (s *AccountService) CreateUser(ctx context.Context, newUser *model.CreateUser) (*model.User, error) {
+	user := &model.User{
 		Login:      newUser.Login,
 		Email:      newUser.Email,
 		Phone:      newUser.Phone,
@@ -42,7 +43,11 @@ func (s *AccountService) CreateUser(ctx context.Context, newUser *model.CreateUs
 		UpdatedAt:  time.Now(),
 	}
 
-	return s.repo.CreateUser(ctx, &user)
+	user, err := s.repo.CreateUser(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user: %w", err)
+	}
+	return user, nil
 }
 
 func (s *AccountService) GetUser(ctx context.Context, userID uint64) (*model.User, error) {

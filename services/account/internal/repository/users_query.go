@@ -13,7 +13,7 @@ import (
 	repomodel "github.com/Molov30/go-microservices/services/account/internal/repository/model"
 )
 
-func (r *Repository) CreateUser(ctx context.Context, user *model.User) error {
+func (r *Repository) CreateUser(ctx context.Context, user *model.User) (*model.User, error) {
 	userRepo := mapper.UserToRepoUser(user)
 
 	res := r.db.
@@ -22,9 +22,11 @@ func (r *Repository) CreateUser(ctx context.Context, user *model.User) error {
 		Create(userRepo)
 
 	if res.Error != nil {
-		return fmt.Errorf("failed to save user: %w", res.Error)
+		return nil, fmt.Errorf("failed to save user: %w", res.Error)
 	}
-	return nil
+
+	user.ID = userRepo.ID
+	return user, nil
 }
 
 func (r *Repository) GetUser(ctx context.Context, userID uint64) (*model.User, error) {
@@ -72,7 +74,7 @@ func (r *Repository) DeleteUser(ctx context.Context, userID uint64) error {
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			return ErrEntryNotFound
 		}
-		return fmt.Errorf("failed to get user by id: %w", res.Error)
+		return fmt.Errorf("failed to delete user by id: %w", res.Error)
 	}
 	return nil
 }

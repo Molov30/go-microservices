@@ -4,20 +4,23 @@ import (
 	"context"
 
 	authpb "github.com/Molov30/go-microservices/generated/auth"
-	"github.com/Molov30/go-microservices/services/auth/internal/mapper"
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	"github.com/Molov30/go-microservices/services/auth/internal/mapper"
 )
 
-func (h *Handler) Login(ctx context.Context, req *authpb.LoginRequest) (*authpb.TokenPair, error) {
+func (h *Handler) Login(ctx context.Context, req *authpb.LoginRequest) (*authpb.LoginResponse, error) {
 	loginParams := mapper.PbLoginToUserLogin(req)
 	tokenPair, err := h.accountService.Login(ctx, loginParams)
 	if err != nil {
 		return nil, h.handleError(err)
 	}
 
-	return &authpb.TokenPair{
-		AccessToken:  tokenPair.AccessToken,
-		RefreshToken: tokenPair.RefreshToken,
+	return &authpb.LoginResponse{
+		TokenPair: &authpb.TokenPair{
+			AccessToken:  tokenPair.AccessToken,
+			RefreshToken: tokenPair.RefreshToken,
+		},
 	}, nil
 }
 
@@ -30,15 +33,17 @@ func (h *Handler) Logout(ctx context.Context, req *authpb.RefreshRequest) (*empt
 	return &emptypb.Empty{}, nil
 }
 
-func (h *Handler) Refresh(ctx context.Context, req *authpb.RefreshRequest) (*authpb.TokenPair, error) {
+func (h *Handler) Refresh(ctx context.Context, req *authpb.RefreshRequest) (*authpb.RefreshResponse, error) {
 	tokenPair, err := h.accountService.Refresh(ctx, req.RefreshToken)
 	if err != nil {
 		return nil, h.handleError(err)
 	}
 
-	return &authpb.TokenPair{
-		AccessToken:  tokenPair.AccessToken,
-		RefreshToken: req.RefreshToken,
+	return &authpb.RefreshResponse{
+		TokenPair: &authpb.TokenPair{
+			AccessToken:  tokenPair.AccessToken,
+			RefreshToken: tokenPair.RefreshToken,
+		},
 	}, nil
 }
 
@@ -59,4 +64,12 @@ func (h *Handler) Validate(ctx context.Context, req *authpb.ValidateRequest) (*a
 	}
 
 	return &authpb.ValidateResponse{UserId: userID}, nil
+}
+
+func (h *Handler) DeleteUser(ctx context.Context, req *authpb.DeleteUserRequest) (*emptypb.Empty, error) {
+	err := h.accountService.DeleteUser(ctx, req.UserId)
+	if err != nil {
+		return nil, h.handleError(err)
+	}
+	return &emptypb.Empty{}, nil
 }

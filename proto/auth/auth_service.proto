@@ -4,19 +4,22 @@ package auth;
 option go_package = "github.com/Molov30/go-microservices/generated/auth;auth";
 
 import "google/protobuf/empty.proto";
+import "auth_model.proto";
 
 service Auth {
     rpc Register(RegisterRequest) returns (google.protobuf.Empty);
-    rpc Login(LoginRequest) returns (TokenPair);
-    rpc Refresh(RefreshRequest) returns (TokenPair);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc Refresh(RefreshRequest) returns (RefreshResponse);
     rpc Validate(ValidateRequest) returns (ValidateResponse);
     rpc Logout(RefreshRequest) returns (google.protobuf.Empty);
+    rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
 }
 
 message RegisterRequest {
-    string login = 1;
-    string email = 2;
-    string password = 3;
+    uint64 user_id = 1;
+    string login = 2;
+    string email = 3;
+    string password = 4;
 }
 
 message LoginRequest {
@@ -24,8 +27,16 @@ message LoginRequest {
     string password = 2;
 }
 
+message LoginResponse {
+    TokenPair token_pair = 1;
+}
+
 message RefreshRequest {
     string refresh_token = 1;
+}
+
+message RefreshResponse {
+    TokenPair token_pair = 1;
 }
 
 message ValidateRequest {
@@ -36,7 +47,6 @@ message ValidateResponse {
     uint64 user_id = 1;
 }
 
-message TokenPair {
-    string access_token = 1;
-    string refresh_token = 2;
+message DeleteUserRequest {
+    uint64 user_id = 1;
 }
