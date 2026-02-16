@@ -9,11 +9,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/rs/zerolog"
+
 	"github.com/Molov30/go-microservices/services/auth/internal/config"
 	"github.com/Molov30/go-microservices/services/auth/internal/grpc"
 	"github.com/Molov30/go-microservices/services/auth/internal/repository"
 	"github.com/Molov30/go-microservices/services/auth/internal/service"
-	"github.com/rs/zerolog"
 )
 
 type App struct {

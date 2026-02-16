@@ -8,12 +8,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Molov30/go-microservices/services/auth/internal/config"
-	"github.com/Molov30/go-microservices/services/auth/internal/model"
-	"github.com/Molov30/go-microservices/services/auth/internal/repository"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/Molov30/go-microservices/services/auth/internal/config"
+	"github.com/Molov30/go-microservices/services/auth/internal/model"
+	"github.com/Molov30/go-microservices/services/auth/internal/repository"
 )
 
 type Repository interface {
@@ -23,6 +24,7 @@ type Repository interface {
 	SaveRefreshToken(ctx context.Context, token *model.RefreshToken) error
 	GetRefreshToken(ctx context.Context, token string) (*model.RefreshToken, error)
 	RevokeRefreshToken(ctx context.Context, token string) error
+	DeleteUser(ctx context.Context, userID uint64) error
 }
 
 type AuthService struct {
@@ -46,6 +48,7 @@ func (s *AuthService) Register(ctx context.Context, registerParams *model.UserRe
 	}
 
 	user := &model.User{
+		ID:           registerParams.UserID,
 		Login:        registerParams.Login,
 		Email:        registerParams.Email,
 		PasswordHash: string(hash),
@@ -103,6 +106,14 @@ func (s *AuthService) Validate(_ context.Context, accessToken string) (uint64, e
 
 func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 	return s.repo.RevokeRefreshToken(ctx, refreshToken)
+}
+
+func (s *AuthService) DeleteUser(ctx context.Context, userID uint64) error {
+	err := s.repo.DeleteUser(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+	return nil
 }
 
 func (s *AuthService) issueTokens(ctx context.Context, userID uint64) (*model.TokenPair, error) {

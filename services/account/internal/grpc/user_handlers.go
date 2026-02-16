@@ -9,13 +9,15 @@ import (
 	"github.com/Molov30/go-microservices/services/account/internal/mapper"
 )
 
-func (h *Handler) CreateUser(ctx context.Context, req *accountpb.CreateUserRequest) (*emptypb.Empty, error) {
-	user := mapper.PbToUserCreate(req.User)
-	err := h.accountService.CreateUser(ctx, user)
+func (h *Handler) CreateUser(ctx context.Context, req *accountpb.CreateUserRequest) (*accountpb.CreateUserResponse, error) {
+	userCreate := mapper.PbToUserCreate(req.User)
+	user, err := h.accountService.CreateUser(ctx, userCreate)
 	if err != nil {
 		return nil, h.handleError(err)
 	}
-	return &emptypb.Empty{}, nil
+	return &accountpb.CreateUserResponse{
+		User: mapper.UserToPb(user),
+	}, nil
 }
 
 func (h *Handler) GetUser(ctx context.Context, req *accountpb.GetUserRequest) (*accountpb.GetUserResponse, error) {

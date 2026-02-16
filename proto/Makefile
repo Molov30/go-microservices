@@ -23,7 +23,7 @@ gen: docker-build
 		$(DOCKER_IMAGE) \
     	bash -c '\
     		set -e; \
-    		for dir in account pagination auth; do \
+    		for dir in account pagination auth gateway; do \
     			echo "Processing $$dir"; \
     			mkdir -p /app/generated/$$dir; \
     			cd /app/proto/$$dir; \

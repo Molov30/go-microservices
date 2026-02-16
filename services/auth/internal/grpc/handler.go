@@ -5,11 +5,12 @@ import (
 	"errors"
 
 	authpb "github.com/Molov30/go-microservices/generated/auth"
-	"github.com/Molov30/go-microservices/services/auth/internal/model"
-	"github.com/Molov30/go-microservices/services/auth/internal/repository"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/Molov30/go-microservices/services/auth/internal/model"
+	"github.com/Molov30/go-microservices/services/auth/internal/repository"
 )
 
 type AuthService interface {
@@ -18,6 +19,7 @@ type AuthService interface {
 	Refresh(ctx context.Context, refreshToken string) (*model.TokenPair, error)
 	Validate(ctx context.Context, accessToken string) (uint64, error)
 	Logout(ctx context.Context, refreshToken string) error
+	DeleteUser(ctx context.Context, userID uint64) error
 }
 
 type Handler struct {

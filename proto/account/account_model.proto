@@ -11,9 +11,8 @@ message CreateUser {
     string first_name = 3;
     string last_name = 4;
     string middle_name = 5;
-    string password = 6;
-    string email = 7;
-    uint32 age = 8;
+    string email = 6;
+    uint32 age = 7;
 }
 
 message UpdateUser {

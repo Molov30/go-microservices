@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+
 	"github.com/Molov30/go-microservices/services/auth/internal/mapper"
 	"github.com/Molov30/go-microservices/services/auth/internal/model"
 	repomodel "github.com/Molov30/go-microservices/services/auth/internal/repository/model"
-	"gorm.io/gorm"
 )
 
 func (r *Repository) SaveRefreshToken(ctx context.Context, token *model.RefreshToken) error {
